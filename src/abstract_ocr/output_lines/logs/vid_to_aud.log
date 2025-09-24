@@ -1,0 +1,1 @@
+2025-04-25 22:11:05,984 - ERROR - Error processing video /home/computron/mnt/webserver/typicallyoutliers/backend/typicallyoutliers_flask/functions/videos/Charlotte Gerson Interviewed on Cancer & Medical Industry Fraud 1_5/Charlotte Gerson Interviewed on Cancer & Medical Industry Fraud 1_5.mp4: name 'video_path_mgr' is not defined

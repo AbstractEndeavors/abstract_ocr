@@ -1,0 +1,8 @@
+ in the script: src/abstract_ocr/ocr_utils.py
+ dubbed with the title: Optical_Character_Recognition_Functionality_in_Abstract_OCR
+ was described as: The given script 'ocr_utils.py' from the package 'abstract_ocr' primarily involves several Optical Character Recognition (OCR) activities. It imports several functions from a local 'functions' script, as well as importing processing libraries like OpenCV and pytesseract.
+
+The OCR process is as follows: 1) 'preprocess_for_ocr' function reads and preprocesses the image by enhancing the contrast, removing noise, thresholding, and sharpening - all using OpenCV functions. 2) 'extract_text_from_image' function processes the image for OCR and then makes use of pytesseract to extract text content from an image. 3) 'is_frame_analyzed' function is used to determine if a particular frame has been analyzed yet by comparing it with already processed frames. 4) 'extract_image_text' function primarily deals with the extraction of text from an image and text cleaning. 5) 'extract_text_from_frame' and 'extract_image_texts_from_directory' are setting up the pipeline to deal with multiple images residing in a single directory. 6) Other functions like 'download_pdf', 'preprocess_image', 'convert_image_to_text' offer additional utilities like the ability to download a PDF, preprocess an image, and convert the image to text respectively.
+
+This module, overall, looks responsible for reading an image file along with its pre-processing and converting the file into a string of texts (ideally to get the data from the file for further analysis). It seems developed keeping in mind a batch-type processing operation where it will process multiple images with OCR in a single directory.
+
