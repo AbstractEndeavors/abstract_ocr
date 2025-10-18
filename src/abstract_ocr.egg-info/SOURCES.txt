@@ -31,5 +31,6 @@ src/abstract_ocr/utils/ocr_utils/imports.py
 src/abstract_ocr/utils/ocr_utils/ocr_utils.py
 src/abstract_ocr/utils/ocr_utils/tesseract_utils.py
 src/abstract_ocr/utils/pdf_utils/__init__.py
+src/abstract_ocr/utils/pdf_utils/imports.py
 src/abstract_ocr/utils/pdf_utils/pdf_to_text.py
 src/abstract_ocr/utils/pdf_utils/pdf_utils.py
