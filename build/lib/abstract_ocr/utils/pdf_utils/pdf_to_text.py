@@ -1,4 +1,5 @@
-import os,shutil,pathlib import Path,hashlib,re,PyPDF2,logging
+import os,shutil,hashlib,re,PyPDF2,logging
+from pathlib import Path
 from pdf2image import convert_from_path
 from abstract_ocr import extract_text_from_image as image_to_text
 from abstract_utilities.path_utils import (is_file, mkdirs, get_directory,  get_base_name, split_text, get_ext, get_file_name)
