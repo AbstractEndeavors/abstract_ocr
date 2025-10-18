@@ -14,7 +14,6 @@ src/abstract_ocr/imports/imports.py
 src/abstract_ocr/imports/splitToChunk.py
 src/abstract_ocr/utils/__init__.py
 src/abstract_ocr/utils/imports.py
-src/abstract_ocr/utils/pdf_utils.py
 src/abstract_ocr/utils/repo_utils.py
 src/abstract_ocr/utils/seo_utils.py
 src/abstract_ocr/utils/text_utils.py
@@ -31,3 +30,6 @@ src/abstract_ocr/utils/ocr_utils/__init__.py
 src/abstract_ocr/utils/ocr_utils/imports.py
 src/abstract_ocr/utils/ocr_utils/ocr_utils.py
 src/abstract_ocr/utils/ocr_utils/tesseract_utils.py
+src/abstract_ocr/utils/pdf_utils/__init__.py
+src/abstract_ocr/utils/pdf_utils/pdf_to_text.py
+src/abstract_ocr/utils/pdf_utils/pdf_utils.py
