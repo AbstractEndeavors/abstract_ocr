@@ -1,9 +1,9 @@
-from testitout import *
 from abstract_utilities import *
-video_path = '/home/computron/mnt/webserver/typicallyoutliers/frontend/public/repository/videos/Carl Sagan - THE sentence !.flv'
+from src.abstract_ocr import *
+video_path = '/home/computron/Videos/Screen_Recording_20210403-075423_Gallery_1.mov'
 output_dir = '/home/computron/Documents/pythonTools/modules/abstract_ocr/test_dir'
 thumbnail_directory = make_dirs(output_dir,'thumbnails')
-generator = pipeline("text-generation", model="distilgpt2", device=-1)
+
 #info_data = get_all_info_data_call(video_path=video_path,info_dir=output_dir)
 metadata = get_video_metadata(video_path)
 extract_audio_from_video(video_path,output_dir)
