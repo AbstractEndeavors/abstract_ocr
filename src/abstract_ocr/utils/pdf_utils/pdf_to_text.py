@@ -181,8 +181,7 @@ def convert_pdf(pdf_convert_dir,pdf_dir):
     pdf_to_text_in_folders(pdf_dir, pdf_convert_dir)
 def convert_pdf_dir(pdf_dir):
     pdf_convert_dir = getPdfConvertDir(pdf_dir)
-    for pdf_dir in directories:
-        convert_pdf(pdf_convert_dir,pdf_dir)
+    convert_pdf(pdf_convert_dir,pdf_dir)
 def convert_pdf_dirs(pdf_dirs):
     for pdf_dir in pdf_dirs:
         convert_pdf_dir(pdf_dir)
