@@ -106,7 +106,7 @@ def if_none_get_def(value, default):
     return value
 
 def if_not_dir_return_None(directory):
-    str_directory = str(directory)ge
+    str_directory = str(directory)
     if os.path.isdir(str_directory):
         return str_directory
     return None
