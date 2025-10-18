@@ -106,7 +106,7 @@ def if_none_get_def(value, default):
     return value
 
 def if_not_dir_return_None(directory):
-    str_directory = str(directory)
+    str_directory = str(directory)ge
     if os.path.isdir(str_directory):
         return str_directory
     return None
@@ -434,9 +434,7 @@ def get_key_vars(keys,req=None,data=None,info_data= None):
                 new_data[key] = get_video_info_dir(**all_data)
             elif key == 'base_url':
                 new_data[key] = DOMAIN
-            elif key == 'generator':
-                generator = get_generator()
-                new_data[key] = generator
+   
             elif key == 'LEDTokenizer':
                 new_data[key] = LEDTokenizer
             elif key == 'LEDForConditionalGeneration':
