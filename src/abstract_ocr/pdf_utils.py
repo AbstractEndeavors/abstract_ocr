@@ -6,7 +6,8 @@ from .functions import (argparse,
                         clean_text,
                         write_to_file,
                         logger,
-                        convert_from_path)
+                        convert_from_path,
+                        logger)
 from .ocr_utils import (preprocess_image,
                         convert_image_to_text,)
 def images_to_pdf(image_paths, output_pdf=None):

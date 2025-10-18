@@ -87,7 +87,7 @@ valid_keys =     ['parent_dir', 'video_path', 'info_dir','info_directory', 'thum
                   'summary', 'seo_title', 'seo_description', 'seo_tags', 'thumbnail', 'duration_seconds',
                   'duration_formatted', 'captions_path', 'schema_markup', 'social_metadata', 'category',
                   'publication_date', 'file_metadata']
-
+logger = get_logFile(__name__)
 def create_key_value(json_obj, key, value):
     json_obj[key] = json_obj.get(key, value) or value
     return json_obj
