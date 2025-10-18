@@ -45,7 +45,9 @@ class importManager():
     def get_spacy(self):
         import spacy
         
-
+def get_generator():
+    generator = pipeline("text-generation", model="distilgpt2", device=-1)
+    return generator
 logger = get_logFile('vid_to_aud')
 logger.debug(f"Logger initialized with {len(logger.handlers)} handlers: {[h.__class__.__name__ for h in logger.handlers]}")
 
@@ -435,8 +437,7 @@ def get_key_vars(keys,req=None,data=None,info_data= None):
             elif key == 'base_url':
                 new_data[key] = DOMAIN
             elif key == 'generator':
-                generator = pipeline("text-generation", model="distilgpt2", device=-1)
-
+                generator = get_generator()
                 new_data[key] = generator
             elif key == 'LEDTokenizer':
                 new_data[key] = LEDTokenizer
