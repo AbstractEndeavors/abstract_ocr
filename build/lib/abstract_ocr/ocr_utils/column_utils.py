@@ -31,10 +31,33 @@ def detect_columns(image_path: Path) -> Tuple[int, int]:
     # Sum vertical ink to detect whitespace valleys
     vert = np.sum(binary, axis=0)
     m0, m1 = w // 4, 3 * w // 4
-    divider = int(np.argmin(vert[m0:m1]) + m0)
+    divider = int(np.argmin(vert[m0:m1]) + m0)-1
 
     logger.info(f"📏 Detected divider at x={divider} of width={w}")
     return divider, w
+# -------------------------------------------------------
+# 3️⃣  Visualization helper
+# -------------------------------------------------------
+
+def visualize_columns(
+    image_path: Path,
+    divider: int
+    ) -> Path:
+    """
+    Draws a visible divider line to confirm column separation visually.
+    Returns path to saved visualization.
+    """
+    img = cv2.imread(str(image_path))
+    if img is None:
+        logger.warning(f"⚠️ Could not read image {image_path}")
+        return None
+
+    h, w, _ = img.shape
+    cv2.line(img, (divider, 0), (divider, h), (0, 0, 255), 2)
+    out_path = str(image_path).replace(".png", "_divider_vis.png")
+    cv2.imwrite(out_path, img)
+    logger.info(f"🧩 Divider visualization saved to: {out_path}")
+    return Path(out_path)
 
 
 # -------------------------------------------------------
@@ -110,50 +133,66 @@ def validate_reading_order(
     return is_two_col
 
 
-# -------------------------------------------------------
-# 3️⃣  Visualization helper
-# -------------------------------------------------------
 
-def visualize_columns(image_path: Path, divider: int) -> Path:
-    """
-    Draws a visible divider line to confirm column separation visually.
-    Returns path to saved visualization.
-    """
-    img = cv2.imread(str(image_path))
-    if img is None:
-        logger.warning(f"⚠️ Could not read image {image_path}")
-        return None
+def save_column_img(out_dir: str, columns_js: Dict[str, Dict]) -> Dict[str, Dict]:
+    make_dirs(out_dir)
+    filename = columns_js.get("page", {}).get('filename', "page")
+    base_dir = os.path.join(out_dir, filename)
+    make_dirs(base_dir)
 
-    h, w, _ = img.shape
-    cv2.line(img, (divider, 0), (divider, h), (0, 0, 255), 2)
-    out_path = str(image_path).replace(".png", "_divider_vis.png")
-    cv2.imwrite(out_path, img)
-    logger.info(f"🧩 Divider visualization saved to: {out_path}")
-    return Path(out_path)
+    for column, values in columns_js.items():
+        if column not in ("left", "right"):
+            continue
+        img = values["image"].get("img")
+        if img is None:
+            continue
+        col_filename = f"{filename}_{column}"
+        columns_js[column]["filename"] = col_filename
+        img_path = os.path.join(base_dir, f"{col_filename}.png")
+        cv2.imwrite(img_path, img)
+        columns_js[column]["image"]["path"] = img_path
+        logger.info(f"✂️  Columns sliced → {column}: {img_path}")
+    return columns_js
 
-
+    
 # -------------------------------------------------------
 # 4️⃣  Column slicing
 # -------------------------------------------------------
 
-def slice_columns(image_path: Path, divider: int, out_dir: Path, basename: str) -> Tuple[Path, Path]:
+def slice_columns(
+    image_path: str,
+    divider: int = None,
+    out_dir: str = None,
+    columns_js: Dict = None,
+    left_overlap: float = 0.02,   # left column reaches 2% *past* divider
+    right_gap: float = 0.005      # right column starts 0.5% *after* divider
+) -> Dict[str, Dict]:
     """
-    Splits an image into left/right halves and saves them to disk.
-    Returns (left_path, right_path).
+    Split an image into left/right halves, giving the left column priority
+    at the divider. The left extends slightly *past* the divider, while
+    the right begins a bit *after* it.
     """
     img = cv2.imread(str(image_path))
     if img is None:
         logger.warning(f"⚠️ Could not read image {image_path}")
-        return None, None
+        return columns_js or {}
 
     h, w, _ = img.shape
-    left, right = img[:, :divider, :], img[:, divider:, :]
+    divider = divider or detect_columns(image_path)[0]
+    out_dir = out_dir or os.getcwd()
 
-    make_dirs(out_dir)
-    lpath = os.path.join(out_dir, f"{basename}_left.png")
-    rpath = os.path.join(out_dir, f"{basename}_right.png")
-    cv2.imwrite(lpath, left)
-    cv2.imwrite(rpath, right)
+    # compute offsets
+    left_end = max(0, int(divider + w * left_overlap))
+    right_start = max(0, int(divider + w * right_gap))
 
-    logger.info(f"✂️  Columns sliced → Left: {lpath}, Right: {rpath}")
-    return Path(lpath), Path(rpath)
+    # crop halves
+    left = img[:, :left_end, :]
+    right = img[:, right_start:, :]
+
+    # assign results
+    if columns_js:
+        columns_js["left"]["image"]["img"] = left
+        columns_js["right"]["image"]["img"] = right
+        return save_column_img(out_dir, columns_js)
+    else:
+        return {"left": left, "right": right}

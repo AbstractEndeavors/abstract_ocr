@@ -24,7 +24,7 @@ class PaddleManager(metaclass=SingletonMeta):
     Ensures only one PaddleOCR model instance is ever loaded.
     """
 
-    def __init__(self, lang: str = "en"):
+    def __init__(self, lang: str = "en",cls=False):
         self.lang = lang
         self.ocr = None
         self.initialized = False
@@ -37,10 +37,7 @@ class PaddleManager(metaclass=SingletonMeta):
         try:
             # 🔒 Lock Paddle to CPU globally
             paddle.device.set_device("cpu")
-            self.ocr = PaddleOCR(
-                use_textline_orientation=True,  # replaces deprecated use_angle_cls
-                lang=self.lang
-            )
+            self.ocr = PaddleOCR(use_angle_cls=True, lang=self.lang)
             self.initialized = True
             logger.info("✅ PaddleOCR initialized (CPU mode)")
         except Exception as e:

@@ -118,16 +118,10 @@ def layered_ocr_img(img: np.ndarray, engine: str = "tesseract") -> pd.DataFrame:
     if df is None or df.empty:
         return pd.DataFrame(columns=["text", "left", "top", "width", "height", "conf"])
 
-    # Ensure consistent structure
-    required_cols = ["text", "left", "top", "width", "height"]
-    for col in required_cols:
-        if col not in df.columns:
-            df[col] = 0
-
+    # ✅ Force strict top-to-bottom order (no L→R mixing)
     try:
-        df = df.sort_values(["left", "top"]).reset_index(drop=True)
+        df = df.sort_values("top").reset_index(drop=True)
     except Exception as e:
         logger.warning(f"Could not sort OCR output for engine {engine}: {e}")
 
     return df
-
