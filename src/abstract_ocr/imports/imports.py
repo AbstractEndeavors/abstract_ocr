@@ -19,4 +19,4 @@ from abstract_utilities import (
     is_number,
     make_dirs
     )
-logger = get_logFile('this')
+logger = get_logFile(__name__)
