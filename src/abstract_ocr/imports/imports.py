@@ -5,8 +5,6 @@ from PIL import Image
 from pathlib import Path
 from paddleocr import PaddleOCR
 from pdf2image import convert_from_path
-from abstract_webserver import serverManager
-from abstract_hugpy import deep_zero_generate
 import io, os, cv2, PyPDF2, traceback, cv2, re
 import PyPDF2, easyocr, pytest, pytesseract, glob,difflib
 from abstract_utilities import (
