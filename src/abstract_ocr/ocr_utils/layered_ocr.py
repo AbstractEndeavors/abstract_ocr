@@ -31,7 +31,7 @@ def easyocr_ocr(path: Path) -> pd.DataFrame:
     return pd.DataFrame(recs)
 
 def paddleocr_ocr(path: Path) -> pd.DataFrame:
-    ocr = PaddleOCR(use_angle_cls=Ocr_Config.PADDLE_USE_ANGLE_CLS, lang=Config.PADDLE_LANG)
+    ocr = PaddleOCR(use_angle_cls=Ocr_Config.PADDLE_USE_ANGLE_CLS, lang=Ocr_Config.PADDLE_LANG)
     recs = []
     for page in ocr.ocr(str(path), cls=True):
         if page:    
