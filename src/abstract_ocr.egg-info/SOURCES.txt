@@ -17,7 +17,7 @@ src/abstract_ocr/imports/image_utils/threshold_utils.py
 src/abstract_ocr/ocr_utils/__init__.py
 src/abstract_ocr/ocr_utils/column_utils.py
 src/abstract_ocr/ocr_utils/layered_ocr.py
-src/abstract_ocr/ocr_utils/paddleManager.py
+src/abstract_ocr/ocr_utils/paddle_manager.py
 src/abstract_ocr/old/__init__.py
 src/abstract_ocr/old/imports.py
 src/abstract_ocr/old/repo_utils.py
