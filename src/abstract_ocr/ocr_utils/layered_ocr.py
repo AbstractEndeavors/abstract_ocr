@@ -72,7 +72,7 @@ def layered_ocr_img(img: np.ndarray, engine='tesseract') -> pd.DataFrame:
 
     # Sort robustly
     try:
-        return df.sort_values(['top', 'left']).reset_index(drop=True)
+        return df.sort_values(['left', 'top']).reset_index(drop=True)
     except Exception as e:
         logger.warning(f"Could not sort dataframe for engine {engine}: {e}")
         return df.reset_index(drop=True)
