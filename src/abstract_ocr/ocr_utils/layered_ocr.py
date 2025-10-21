@@ -57,23 +57,45 @@ def easyocr_ocr(path: Path) -> pd.DataFrame:
 
 
 def paddleocr_ocr(path: Path) -> pd.DataFrame:
-    """Perform OCR using PaddleOCR (CPU-only)."""
-    ocr = PaddleManager.get_instance().ocr
-    recs = []
-    for page in ocr.ocr(str(path), cls=False):
-        if not page:
-            continue
-        for bbox, (text, conf) in page:
-            xs, ys = zip(*bbox)
-            recs.append({
-                "text": text,
-                "conf": conf,
-                "left": min(xs), "top": min(ys),
-                "width": max(xs) - min(xs),
-                "height": max(ys) - min(ys),
-            })
-    return pd.DataFrame(recs)
+    """Perform OCR using PaddleOCR (CPU-only), with Tesseract fallback."""
+    from .layered_ocr import tesseract_ocr_img  # local import to avoid circular
+    import cv2
 
+    recs = []
+    ocr = getattr(PaddleManager.get_instance(), "ocr", None)
+
+    # Attempt PaddleOCR first
+    if ocr:
+        try:
+            results = ocr.ocr(str(path), cls=False)
+            for page in results or []:
+                if not page:
+                    continue
+                for bbox, (text, conf) in page:
+                    xs, ys = zip(*bbox)
+                    recs.append({
+                        "text": text,
+                        "conf": conf,
+                        "left": min(xs), "top": min(ys),
+                        "width": max(xs) - min(xs),
+                        "height": max(ys) - min(ys),
+                    })
+            if recs:
+                return pd.DataFrame(recs)
+            else:
+                logger.warning(f"⚠️ PaddleOCR returned no text for {path}")
+        except Exception as e:
+            logger.error(f"❌ PaddleOCR failed on {path}: {e}")
+
+    # --- fallback to Tesseract ---
+    try:
+        img = cv2.imread(str(path))
+        df = tesseract_ocr_img(img)
+        logger.info(f"✅ Fallback to Tesseract succeeded for {path}")
+        return df
+    except Exception as e:
+        logger.error(f"❌ Both PaddleOCR and Tesseract failed for {path}: {e}")
+        return pd.DataFrame(columns=["text", "conf", "left", "top", "width", "height"])
 
 # -----------------------------------------------------
 # Layered OCR Logic
