@@ -1,5 +1,5 @@
 from ..imports import *
-from .preprocess import *
+from ..ocr_utils.preprocess import *
 from .text_extract import *
 def extract_text_from_image(image_path: str) -> str:
     try:
