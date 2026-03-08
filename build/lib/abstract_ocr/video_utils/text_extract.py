@@ -1,6 +1,5 @@
 from ..imports import *
-from .preprocess import *
-
+from ..ocr_utils import preprocess_for_ocr
 def convert_image_to_text(image_path: str,preprocess=True) -> str:
     try:
         if preprocess:
