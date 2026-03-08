@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from .imports import *
-
+from ..ocr_utils import *
 def preprocess_image(image_path: str, output_path: str) -> None:
     sharpened = preprocess_for_ocr(image_path)
     cv2.imwrite(output_path, sharpened)
