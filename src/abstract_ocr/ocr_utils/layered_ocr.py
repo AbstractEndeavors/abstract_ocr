@@ -8,10 +8,8 @@ Unified OCR orchestration for multi-engine text extraction:
 - PaddleOCR (via PaddleManager, CPU-only)
 """
 
-from ..imports import *
+from .imports import *
 from .paddle_manager import PaddleManager
-
-
 # -----------------------------------------------------
 # Image Preprocessing
 # -----------------------------------------------------
@@ -59,7 +57,7 @@ def easyocr_ocr(path: Path) -> pd.DataFrame:
 def paddleocr_ocr(path: Path) -> pd.DataFrame:
     """Perform OCR using PaddleOCR (CPU-only), with Tesseract fallback."""
     from .layered_ocr import tesseract_ocr_img  # local import to avoid circular
-    import cv2
+
 
     recs = []
     ocr = getattr(PaddleManager.get_instance(), "ocr", None)

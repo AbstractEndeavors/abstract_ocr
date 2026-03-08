@@ -1,15 +1,9 @@
-import cv2
-import numpy as np
-from pathlib import Path
-import pandas as pd
-import logging
-import os
-
+from .imports import *
 logger = logging.getLogger(__name__)
 
 # Assuming you have these from your modules (adjust imports as needed)
-from abstract_ocr.ocr_utils.column_utils import detect_columns, validate_reading_order, slice_columns
-from abstract_ocr.ocr_utils.layered_ocr import layered_ocr_img
+from .column_utils import detect_columns, validate_reading_order, slice_columns
+from .layered_ocr import layered_ocr_img
 
 def process_image(input_data, engine='paddle', debug=True, visualize=False, out_dir=None):
     """

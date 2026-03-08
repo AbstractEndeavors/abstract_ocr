@@ -11,19 +11,15 @@ Usage:
 """
 
 import logging
-import paddle
-from paddleocr import PaddleOCR
-from functools import lru_cache
-from abstract_utilities import SingletonMeta
-
-logger = logging.getLogger("abstract_ocr")
-
+from ..imports import *
 class PaddleManager(metaclass=SingletonMeta):
     """
     CPU-locked PaddleOCR manager.
     Ensures only one PaddleOCR model instance is ever loaded.
     """
-
+    paddle = lazy_import("paddle")
+    PaddleOCR = get_lazy_attr("paddleocr", "PaddleOCR")
+    
     def __init__(self, lang: str = "en",cls=False):
         self.lang = lang
         self.ocr = None
@@ -36,6 +32,7 @@ class PaddleManager(metaclass=SingletonMeta):
             return
         try:
             # 🔒 Lock Paddle to CPU globally
+            paddle = lazy_import("paddle")
             paddle.device.set_device("cpu")
             self.ocr = PaddleOCR(use_angle_cls=True, lang=self.lang)
             self.initialized = True

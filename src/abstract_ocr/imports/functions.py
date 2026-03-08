@@ -4,8 +4,6 @@ def make_dir(*paths):
     paths = [str(path) for path in paths]
     return make_dirs(*paths)
 # conftest.py
-import os,pytest,pytesseract
-
 @pytest.fixture(autouse=True)
 def tesseract_env(monkeypatch):
     """

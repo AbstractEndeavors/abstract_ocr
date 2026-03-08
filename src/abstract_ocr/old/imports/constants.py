@@ -40,5 +40,5 @@ valid_keys =     ['parent_dir', 'video_path', 'info_dir','info_directory', 'thum
                   'summary', 'seo_title', 'seo_description', 'seo_tags', 'thumbnail', 'duration_seconds',
                   'duration_formatted', 'captions_path', 'schema_markup', 'social_metadata', 'category',
                   'publication_date', 'file_metadata']
-SAMPLE_RATE = whisper.audio.SAMPLE_RATE  # 16000 Hz
+SAMPLE_RATE = 16000  # 16000 Hz
 
