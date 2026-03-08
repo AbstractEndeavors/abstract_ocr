@@ -65,7 +65,7 @@ def paddleocr_ocr(path: Path) -> pd.DataFrame:
     # Attempt PaddleOCR first
     if ocr:
         try:
-            results = ocr.ocr(str(path), cls=False)
+            results = ocr.ocr(str(path))
             for page in results or []:
                 if not page:
                     continue
