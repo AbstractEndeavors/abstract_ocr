@@ -200,6 +200,6 @@ class SliceManager:
             self.process_pdf_for_engine(engine)
         logger.info(f"🏁 Finished all engines for {self.filename}")
 
-pdf_path = "/home/op/Documents/python/scripts/pdftest/US_20060185726_A1.pdf"
+pdf_path = "/var/www/presites/thedailydialectics/react/main/public/pdfs/cancer/cannabis/test_cancer/test_cancer.pdf"
 slice_mgr = SliceManager(pdf_path)
 slice_mgr.process_pdf()
