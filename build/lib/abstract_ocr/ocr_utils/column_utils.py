@@ -187,37 +187,39 @@ def save_column_img(out_dir: str, columns_js: Dict) -> Dict:
 
 def slice_columns(
     image_path: str,
-    divider: int | None = None,
-    out_dir: str | None = None,
-    columns_js: Dict | None = None,
-    left_overlap: float = 0.02,
-    right_gap: float = 0.005
-):
-
+    divider: int = None,
+    out_dir: str = None,
+    columns_js: Dict = None,
+    left_overlap: float = 0.02,   # left column reaches 2% *past* divider
+    right_gap: float = 0.005      # right column starts 0.5% *after* divider
+) -> Dict[str, Dict]:
+    """
+    Split an image into left/right halves, giving the left column priority
+    at the divider. The left extends slightly *past* the divider, while
+    the right begins a bit *after* it.
+    """
+    columns_js=columns_js or {}
     img = cv2.imread(str(image_path))
-
     if img is None:
         logger.warning(f"⚠️ Could not read image {image_path}")
         return columns_js or {}
 
     h, w, _ = img.shape
+    divider = divider or detect_columns(image_path)[0]
+    out_dir = out_dir or os.getcwd()
 
-    if divider is None:
-        divider, _ = detect_columns(image_path)
+    # compute offsets
+    left_end = max(0, int(divider + w * left_overlap))
+    right_start = max(0, int(divider + w * right_gap))
+    columns_js["left"]=columns_js.get("left") or  {}
+    columns_js["right"]=columns_js.get("right") or  {}
+    columns_js["left"]["image"]=columns_js.get("image") or  {}
+    columns_js["right"]["image"]=columns_js.get("image") or  {}
+    # crop halves
+    left = img[:, :left_end, :]
+    right = img[:, right_start:, :]
+    columns_js["left"]["image"]["img"] = left
+    columns_js["right"]["image"]["img"] = right
 
-    divider = max(0, min(divider, w))
+    return save_column_img(out_dir, columns_js)
 
-    left_end = int(divider + w * left_overlap)
-    right_start = int(divider + w * right_gap)
-
-    left = img[:, :left_end]
-    right = img[:, right_start:]
-
-    if columns_js:
-
-        columns_js.setdefault("left", {}).setdefault("image", {})["img"] = left
-        columns_js.setdefault("right", {}).setdefault("image", {})["img"] = right
-
-        return save_column_img(out_dir or os.getcwd(), columns_js)
-
-    return {"left": left, "right": right}
