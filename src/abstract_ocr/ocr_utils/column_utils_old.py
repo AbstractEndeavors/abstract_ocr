@@ -172,6 +172,7 @@ def slice_columns(
     at the divider. The left extends slightly *past* the divider, while
     the right begins a bit *after* it.
     """
+    columns_js=columns_js or {}
     img = cv2.imread(str(image_path))
     if img is None:
         logger.warning(f"⚠️ Could not read image {image_path}")
@@ -184,15 +185,15 @@ def slice_columns(
     # compute offsets
     left_end = max(0, int(divider + w * left_overlap))
     right_start = max(0, int(divider + w * right_gap))
-
+    columns_js["left"]=columns_js.get("left") or  {}
+    columns_js["right"]=columns_js.get("right") or  {}
+    columns_js["left"]["image"]=columns_js.get("image") or  {}
+    columns_js["right"]["image"]=columns_js.get("image") or  {}
     # crop halves
     left = img[:, :left_end, :]
     right = img[:, right_start:, :]
+    columns_js["left"]["image"]["img"] = left
+    columns_js["right"]["image"]["img"] = right
 
-    # assign results
-    if columns_js:
-        columns_js["left"]["image"]["img"] = left
-        columns_js["right"]["image"]["img"] = right
-        return save_column_img(out_dir, columns_js)
-    else:
-        return {"left": left, "right": right}
+    return save_column_img(out_dir, columns_js)
+

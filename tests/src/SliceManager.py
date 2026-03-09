@@ -1,9 +1,9 @@
 from abstract_pdfs import *
-
 from typing import Optional, Tuple, Dict
 import os
 import shutil
 import traceback
+from .document_fs import normalize_pdf_path
 
 
 # ---------------------------------------------------------
@@ -42,7 +42,6 @@ def find_closest_pdf(directory: str) -> Optional[str]:
 
     return closest_pdf
 
-
 # ---------------------------------------------------------
 # Directory Normalization
 # ---------------------------------------------------------
@@ -51,36 +50,40 @@ def ensure_pdf_directory(pdf_item: str, out_root: Optional[str] = None) -> Tuple
     """
     Guarantee that a PDF lives inside a directory with the same name.
     """
-
+    file_parts = normalize_pdf_path(pdf_item)
+    dirname = file_parts.get('dirname')
+    filename = file_parts.get('filename')
+    dirbase = file_parts.get('dirbase')
+    basename = file_parts.get('basename')
+    pdf_item = file_parts.get("file_path")
     if os.path.isdir(pdf_item):
+        input(pdf_item)
+        pdf_item = find_closest_pdf(pdf_item)
 
-        pdf_path = find_closest_pdf(pdf_item)
-
-        if not pdf_path:
+        if not pdf_item:
             raise RuntimeError(f"No PDF found in directory: {pdf_item}")
 
-        base = os.path.dirname(pdf_path)
-        return pdf_path, base
+        return get_file_parts(pdf_item)
 
     if not os.path.isfile(pdf_item) or not pdf_item.lower().endswith(".pdf"):
         raise RuntimeError(f"Invalid PDF path: {pdf_item}")
+    file_parts = normalize_pdf_path(pdf_item)
+    dirname = file_parts.get('dirname')
+    filename = file_parts.get('filename')
+    dirbase = file_parts.get('dirbase')
+    basename = file_parts.get('basename')
+    pdf_item = file_parts.get("file_path")
 
-    pdf_item = os.path.abspath(pdf_item)
-
-    dirname = os.path.dirname(pdf_item)
-    filename = os.path.splitext(os.path.basename(pdf_item))[0]
-
-    base_dir = out_root or os.path.join(dirname, filename)
+    base_dir = out_root or dirname
 
     os.makedirs(base_dir, exist_ok=True)
 
     new_pdf = os.path.join(base_dir, os.path.basename(pdf_item))
 
     if pdf_item != new_pdf:
-        shutil.move(pdf_item, new_pdf)
+        shutil.copy(pdf_item, new_pdf)
 
-    return new_pdf, base_dir
-
+    return get_file_parts(new_pdf)
 
 # ---------------------------------------------------------
 # Slice Manager
@@ -99,11 +102,10 @@ class SliceManager:
         engine_directory=False,
         visualize=False,
     ):
-
-        self.pdf_path, self.base = ensure_pdf_directory(pdf_path, out_root)
-
-        self.file_parts = get_file_parts(self.pdf_path)
-        self.filename = self.file_parts["filename"]
+        self.file_parts = ensure_pdf_directory(pdf_path, out_root)
+        self.pdf_path = self.file_parts.get("file_path")
+        self.base_dir = self.file_parts.get("dirname")
+        self.filename = self.file_parts.get("filename")
 
         self.visualize = visualize
         self.imgs = []
@@ -112,16 +114,16 @@ class SliceManager:
         self.engine_directory = engine_directory or len(self.engines) > 1
 
         # Base directories
-        self.pages = make_dir(self.base, "pages")
-        self.images = make_dir(self.base, "images")
-        self.cols = make_dir(self.base, "columns")
+        self.pages = make_dir(self.base_dir, "pages")
+        self.images = make_dir(self.base_dir, "images")
+        self.cols = make_dir(self.base_dir, "columns")
 
         # Engine directories
         self.engine_dirs = {}
 
         for engine in self.engines:
 
-            root = make_dir(self.base, engine) if self.engine_directory else self.base
+            root = make_dir(self.base_dir, engine) if self.engine_directory else self.base_dir
 
             self.engine_dirs[engine] = {
 
@@ -229,13 +231,13 @@ class SliceManager:
 
             validate_reading_order(img_path, divider, visualize=self.visualize)
 
-            columns = slice_columns(img_path, divider, self.cols, {})
-
+            columns = slice_columns(img_path, divider, self.base_dir, {})
+            input(columns)
             for side, meta in columns.items():
-
+                input(meta)
                 if side not in ("left", "right"):
                     continue
-
+                input(meta)
                 txt, cln = self.process_single_column(
                     meta["image"]["path"],
                     page_num,

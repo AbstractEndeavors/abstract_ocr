@@ -1,27 +1,28 @@
-from .document_fs import normalize_pdf_directory
+
+from .document_fs import normalize_pdf_path
 from .document_slug import slugify
 from .document_integrity import validate_collection
 from .document_rename import rename_collection
 from .SliceManager import SliceManager
 
 
-
 class DocumentPipeline:
 
     def __init__(self, pdf_path):
-
-        self.base_dir = normalize_pdf_directory(pdf_path)
+        self.file_parts = normalize_pdf_path(pdf_path)
+        self.pdf_path = self.file_parts.get("file_path")
+        self.base_dir = self.file_parts.get("dirname")
 
     def run(self):
 
         print("📂 normalized directory:", self.base_dir)
 
         # OCR
-        slice_mgr = SliceManager(self.base_dir)
+        slice_mgr = SliceManager(self.pdf_path)
         slice_mgr.process_pdf()
 
         # validate completeness
-        pages = validate_collection(self.base_dir)
+        pages = validate_collection(Path(self.base_dir))
 
         print(f"✅ validated {pages} pages")
 
