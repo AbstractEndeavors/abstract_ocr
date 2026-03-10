@@ -1,2 +1,8 @@
 abstract_utilities
 requests
+pdf2image
+PyPDF2
+easyocr
+pytest
+pytesseract
+lxml

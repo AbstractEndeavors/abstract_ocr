@@ -56,16 +56,19 @@ def ensure_pdf_directory(pdf_item: str, out_root: Optional[str] = None) -> Tuple
     dirbase = file_parts.get('dirbase')
     basename = file_parts.get('basename')
     pdf_item = file_parts.get("file_path")
+    ext = file_parts.get("ext")
     if os.path.isdir(pdf_item):
-        input(pdf_item)
         pdf_item = find_closest_pdf(pdf_item)
 
         if not pdf_item:
             raise RuntimeError(f"No PDF found in directory: {pdf_item}")
 
         return get_file_parts(pdf_item)
-
-    if not os.path.isfile(pdf_item) or not pdf_item.lower().endswith(".pdf"):
+    input(f"pdf_item {pdf_item} == not pdf_item {not pdf_item}")
+    input(f"pdf_item {pdf_item} == not os.path.isfile(pdf_item){not os.path.isfile(pdf_item)}")
+    input(f"pdf_item {pdf_item} == not ext != {ext != '.pdf'}")
+ 
+    if not pdf_item or not os.path.isfile(pdf_item) or ext != ".pdf":
         raise RuntimeError(f"Invalid PDF path: {pdf_item}")
     file_parts = normalize_pdf_path(pdf_item)
     dirname = file_parts.get('dirname')
@@ -144,6 +147,12 @@ class SliceManager:
 
     def extract_page_image(self, page, page_num: int) -> Optional[str]:
 
+        img_path = os.path.join(self.images, f"page_{page_num}.png")
+
+        # CACHE CHECK
+        if os.path.exists(img_path):
+            return img_path
+
         try:
 
             page_pdf = os.path.join(self.pages, f"page_{page_num}.pdf")
@@ -160,14 +169,11 @@ class SliceManager:
                 logger.warning(f"No image extracted for page {page_num}")
                 return None
 
-            img_path = os.path.join(self.images, f"page_{page_num}.png")
-
             images[0].save(img_path, "PNG")
 
             return img_path
 
         except Exception as e:
-
             logger.error(f"Page extraction failed on {page_num}: {e}")
             return None
 
@@ -188,25 +194,25 @@ class SliceManager:
         suffix = f"_{side_label}" if side_label else ""
         png_name = f"page_{page_num}{suffix}.png"
         txt_name = f"page_{page_num}{suffix}.txt"
-
-        proc_img = os.path.join(dirs["pre_img"], png_name)
-
-        preprocess_image(img_path, proc_img)
-
-        image_array = cv2.imread(proc_img)
-
-        df = layered_ocr_img(image_array, engine=engine)
-
-        txt = "\n".join(df["text"].tolist())
         txt_path = os.path.join(dirs["raw_tx"], txt_name)
-        write_to_file(contents=txt,file_path=txt_path)
-        
-        cln = clean_text(txt)
         cln_path = os.path.join(dirs["clean_tx"], txt_name)
-        write_to_file(contents=cln,file_path=cln_path)
+        proc_img = os.path.join(dirs["pre_img"], png_name)
+        if not os.path.isfile(txt_path) or not os.path.isfile(txt_path):
+        
+            preprocess_image(img_path, proc_img)
+            image_array = cv2.imread(proc_img)
+            df = layered_ocr_img(image_array, engine=engine)
 
-        logger.info(f"[{engine}] OCR complete page {page_num}{suffix}")
+            txt = "\n".join(df["text"].tolist())
+            write_to_file(contents=txt,file_path=txt_path)
+            
+            cln = clean_text(txt)
+            write_to_file(contents=cln,file_path=cln_path)
 
+            logger.info(f"[{engine}] OCR complete page {page_num}{suffix}")
+        else:
+            txt = read_from_file(txt_path)
+            cln = read_from_file(cln_path)
         return txt, cln
 
     # ---------------------------------------------------------
@@ -230,14 +236,25 @@ class SliceManager:
             divider, _ = detect_columns(img_path)
 
             validate_reading_order(img_path, divider, visualize=self.visualize)
+            left_img = os.path.join(self.cols, f"page_{page_num}_left.png")
+            right_img = os.path.join(self.cols, f"page_{page_num}_right.png")
 
-            columns = slice_columns(img_path, divider, self.base_dir, {})
-            input(columns)
+            if os.path.exists(left_img) and os.path.exists(right_img):
+
+                columns = {
+                    "left": {"image": {"path": left_img}},
+                    "right": {"image": {"path": right_img}},
+                }
+
+            else:
+
+                columns = slice_columns(img_path, divider, self.base_dir, {})
+          
             for side, meta in columns.items():
-                input(meta)
+             
                 if side not in ("left", "right"):
                     continue
-                input(meta)
+             
                 txt, cln = self.process_single_column(
                     meta["image"]["path"],
                     page_num,
@@ -261,6 +278,7 @@ class SliceManager:
     # Engine Processing
     # ---------------------------------------------------------
 
+
     def process_pdf_for_engine(self, engine: str):
 
         logger.info(f"[{engine}] starting OCR for {self.filename}")
@@ -270,24 +288,29 @@ class SliceManager:
 
         all_left = []
         all_right = []
+        partial_path = f"{self.filename}_{engine}"
+        right_text_path = os.path.join(dirs["raw_tx"], f"{partial_path}_RIGHT.txt")
+        left_text_path = os.path.join(dirs["raw_tx"], f"{partial_path}_LEFT.txt")
+        if not os.path.isfile(left_text_path) or not os.path.isfile(right_text_path):
+            for i, page in enumerate(reader.pages, start=1):
+                left_text_file_path = f"{partial_path}_LEFT.txt"
 
-        for i, page in enumerate(reader.pages, start=1):
+                
+                res = self.process_page(page, i, engine)
 
-            res = self.process_page(page, i, engine)
+                if res["left"]["raw"]["text"]:
+                    all_left.append(res["left"]["raw"]["text"])
 
-            if res["left"]["raw"]["text"]:
-                all_left.append(res["left"]["raw"]["text"])
+                if res["right"]["raw"]["text"]:
+                    all_right.append(res["right"]["raw"]["text"])
+            left_text = "\n\n".join(all_right)
+            
+            write_to_file(contents=left_text,file_path=left_text_path)
+            right_text = "\n\n".join(all_left)
+            
+            write_to_file(contents=right_text,file_path=right_text_path)
 
-            if res["right"]["raw"]["text"]:
-                all_right.append(res["right"]["raw"]["text"])
-        left_text = "\n\n".join(all_right)
-        left_text_path = os.path.join(dirs["raw_tx"], f"{self.filename}_{engine}_LEFT.txt")
-        write_to_file(contents=left_text,file_path=left_text_path)
-        right_text = "\n\n".join(all_left)
-        right_text_path = os.path.join(dirs["raw_tx"], f"{self.filename}_{engine}_RIGHT.txt")
-        write_to_file(contents=right_text,file_path=right_text_path)
-
-        logger.info(f"[{engine}] finished OCR")
+            logger.info(f"[{engine}] finished OCR")
 
     # ---------------------------------------------------------
     # Multi Engine
@@ -299,5 +322,6 @@ class SliceManager:
 
         for engine in self.engines:
             self.process_pdf_for_engine(engine)
-
+        
         logger.info("OCR pipeline complete")
+        return self.file_parts
