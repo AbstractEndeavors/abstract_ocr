@@ -47,9 +47,11 @@ def clean_text(text: str) -> str:
     text = re.sub(r'[^a-zA-Z0-9\s:.,-]', '', text)
     text = text.strip()
     return text
-def get_frame_number(file_path):
-    file_path = '.'.join(file_path.split('.')[:-1])
-    return int(file_path.split('_')[-1])
+def get_frame_number(obj):
+    if isinstance(obj,dict):
+        obj = obj.get('frame')
+    frame = '.'.join(obj.split('.')[:-1])
+    return int(frame.split('_')[-1])
 def sort_frames(frames=None,directory=None):
     if frames in [None,[]] and directory and os.path.isdir(directory):
         frames = get_all_file_types(types=['image'],directory=directory)
