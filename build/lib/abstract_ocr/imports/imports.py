@@ -9,6 +9,7 @@ import PyPDF2, easyocr, pytest, pytesseract, glob,difflib
 from abstract_utilities import *
 from functools import lru_cache
 from pathlib import Path
+import spacy
 from abstract_utilities import (
     make_dirs,
     get_all_file_types,
@@ -25,3 +26,12 @@ from abstract_utilities import (
     lru_cache
     )
 logger = get_logFile(__name__)
+from keybert import KeyBERT
+from transformers import pipeline
+import torch,os,json,unicodedata,hashlib
+from transformers import LEDTokenizer,LEDForConditionalGeneration
+
+summarizer = pipeline("text-generation", model="Falconsai/text_summarization")
+keyword_extractor = pipeline("feature-extraction", model="distilbert-base-uncased")
+generator = pipeline('text-generation', model='distilgpt2', device= -1)
+kw_model = KeyBERT(model=keyword_extractor.model)

@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 setuptools.setup(
     name='abstract_ocr',
-    version='0.0.1.47',
+    version='0.0.1.48',
     author='putkoff',
     author_email='partners@abstractendeavors.com',
     description='abstract_ocr',
@@ -32,7 +32,8 @@ setuptools.setup(
         'pytest',
         'pytesseract',
         'lxml',
-        'moviepy==1.0.3'
+        'moviepy==1.0.3',
+        'spacy'
         ],
     python_requires=">=3.6",
     # Add this line to include wheel format in your distribution
