@@ -6,3 +6,4 @@ easyocr
 pytest
 pytesseract
 lxml
+moviepy==1.0.3

@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: abstract_ocr
-Version: 0.0.1.45
+Version: 0.0.1.46
 Summary: abstract_ocr
 Author: putkoff
 Author-email: partners@abstractendeavors.com
@@ -23,6 +23,7 @@ Requires-Dist: easyocr
 Requires-Dist: pytest
 Requires-Dist: pytesseract
 Requires-Dist: lxml
+Requires-Dist: moviepy==1.0.3
 Dynamic: author
 Dynamic: author-email
 Dynamic: classifier

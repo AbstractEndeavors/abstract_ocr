@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 setuptools.setup(
     name='abstract_ocr',
-    version='0.0.1.45',
+    version='0.0.1.46',
     author='putkoff',
     author_email='partners@abstractendeavors.com',
     description='abstract_ocr',
@@ -23,7 +23,17 @@ setuptools.setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
     ],
-    install_requires=['abstract_utilities','requests','pdf2image','PyPDF2','easyocr','pytest','pytesseract','lxml'],
+    install_requires=[
+        'abstract_utilities',
+        'requests',
+        'pdf2image',
+        'PyPDF2',
+        'easyocr',
+        'pytest',
+        'pytesseract',
+        'lxml',
+        'moviepy==1.0.3'
+        ],
     python_requires=">=3.6",
     # Add this line to include wheel format in your distribution
     setup_requires=['wheel'],

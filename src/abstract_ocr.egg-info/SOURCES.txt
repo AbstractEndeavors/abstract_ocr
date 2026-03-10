@@ -14,6 +14,7 @@ src/abstract_ocr/imports/image_utils/__init__.py
 src/abstract_ocr/imports/image_utils/cv_constants.py
 src/abstract_ocr/imports/image_utils/image_readers.py
 src/abstract_ocr/imports/image_utils/threshold_utils.py
+src/abstract_ocr/imports/image_utils/utils.py
 src/abstract_ocr/ocr_utils/__init__.py
 src/abstract_ocr/ocr_utils/column_utils.py
 src/abstract_ocr/ocr_utils/getimg.py
@@ -21,6 +22,7 @@ src/abstract_ocr/ocr_utils/imports.py
 src/abstract_ocr/ocr_utils/layered_ocr.py
 src/abstract_ocr/ocr_utils/paddle_manager.py
 src/abstract_ocr/ocr_utils/preprocess.py
+src/abstract_ocr/ocr_utils/text_utils.py
 src/abstract_ocr/video_utils/__init__.py
 src/abstract_ocr/video_utils/frame_extract.py
 src/abstract_ocr/video_utils/text_extract.py
