@@ -6,7 +6,7 @@ from ..imports import (logger,
                         LEDTokenizer,
                         LEDForConditionalGeneration,
                         generator)
-from .ocr_utils import extract_text_from_image
+from ..ocr_utils import extract_text_from_image
 nlp = spacy.load("en_core_web_sm")
 def get_content_length(text):
     for each in ['into a ']:
