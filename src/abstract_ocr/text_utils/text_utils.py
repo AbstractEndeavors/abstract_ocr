@@ -1,11 +1,11 @@
 from ..imports import (logger,
                         Counter,
                         spacy,
-                        kw_model,
-                        summarizer,
+                        get_kw_model,
+                        get_summarizer,
                         LEDTokenizer,
                         LEDForConditionalGeneration,
-                        generator)
+                        get_generator)
 from ..ocr_utils import extract_text_from_image
 nlp = spacy.load("en_core_web_sm")
 def get_content_length(text):
@@ -41,7 +41,7 @@ def refine_with_gpt(full_text: str,task=None) -> str:
         min_l = lengths[0]
         if min_l: 
             min_length = int(min_l)
-    out = generator(prompt, min_length=min_length,max_length=max_length, num_return_sequences=1)[0]["generated_text"]
+    out = get_generator()(prompt, min_length=min_length,max_length=max_length, num_return_sequences=1)[0]["generated_text"]
     return out.strip()
 def generate_with_bigbird(text: str, task: str = "title", model_dir: str = "allenai/led-base-16384") -> str:
     try:
@@ -83,7 +83,7 @@ def get_keybert(full_text,
     stop_words = stop_words or "english",
     use_mmr = use_mmr or True,
     diversity = diversity or 0.5
-    keybert = kw_model.extract_keywords(
+    keybert = get_kw_model().extract_keywords(
         full_text,
         keyphrase_ngram_range=keyphrase_ngram_range,
         stop_words=stop_words,
@@ -135,7 +135,7 @@ def chunk_summaries(chunks,
     summaries = []
     for idx, chunk in enumerate(chunks):
        
-            out = summarizer(
+            out = get_summarizer()(
                 chunk,
                 max_length=max_length,
                 min_length=min_length,

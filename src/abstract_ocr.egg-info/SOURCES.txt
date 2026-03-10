@@ -9,6 +9,8 @@ src/abstract_ocr.egg-info/requires.txt
 src/abstract_ocr.egg-info/top_level.txt
 src/abstract_ocr/audio_utils/__init__.py
 src/abstract_ocr/audio_utils/audio_utils.py
+src/abstract_ocr/audio_utils/audio_utils_clean.py
+src/abstract_ocr/audio_utils/imports.py
 src/abstract_ocr/imports/__init__.py
 src/abstract_ocr/imports/functions.py
 src/abstract_ocr/imports/imports.py

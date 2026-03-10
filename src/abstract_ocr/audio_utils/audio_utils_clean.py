@@ -1,10 +1,5 @@
 from .imports import *
 SAMPLE_RATE = 16000
-def get_audio_duration(file_path):
-    audio = AudioSegment.from_wav(file_path)
-    duration_seconds = len(audio) / 1000
-    duration_formatted = format_timestamp(len(audio))
-    return duration_seconds,duration_formatted
 def transcribe_audio_file_clean(
     audio_path: str,
     json_data: str = None,
@@ -168,49 +163,16 @@ def transcribe_with_whisper_local(
     audio_path: str,
     model_size: str = "tiny",           # one of "tiny", "base", "small", "medium", "large"
     language: str = "english",
-    use_silence=True,
+    use_silence=False,
     info_data=None):
-    audio_path = audio_path or os.getcwd()
-    if audio_path and os.path.isdir(audio_path):
-        audio_path = os.path.join(audio_path,'audio.wav')
     info_data =info_data or {}
-    model_size = model_size or "tiny"
-    result = whisper_transcribe(audio_path=audio_path,
-                                language=language,
-                                model_size=model_size,
-                                use_silence=use_silence,
-                                whisper_model_path=whisper_model_path)
-    if info_data:
-        info_data['whisper_result'] = result
-        return info_data
-    return result
-
-def export_srt_whisper(whisper_json: dict, output_path: str):
+    # parameters for fixed chunki)
     """
-    Write an .srt file from Whisper's verbose_json format.
-    `whisper_json["segments"]` should be a list of {start,end,text,...}.
+    Returns the full transcript as a string.
     """
-    logger.info(f"export_srt_whisper: {output_path}")
-    segments = whisper_json.get("segments", [])
-    output_path= output_path or os.getcwd()
-    if output_path and os.path.isdir(output_path):
-        output_path = os.path.join(output_path,'captions.srt')
-    with open(output_path, "w", encoding="utf-8") as f:
-        for idx, seg in enumerate(segments, start=1):
-            start_ts = _format_srt_timestamp(seg["start"])
-            end_ts   = _format_srt_timestamp(seg["end"])
-            text     = seg["text"].strip()
-            f.write(f"{idx}\n")
-            f.write(f"{start_ts} --> {end_ts}\n")
-            f.write(f"{text}\n\n")
-            
-def export_srt(audio_text, output_path):
-    logger.info(f"export_srt: {output_path}")
-    with open(output_path, 'w') as f:
-        for i, entry in enumerate(audio_text, 1):
-            start = entry['start_time'].replace('.', ',')
-            end = entry['end_time'].replace('.', ',')
-            f.write(f"{i}\n{start} --> {end}\n{entry['text']}\n\n")
+    model = whisper.load_model(model_size)           # loads to GPU if available
+    # options: you can pass `task="translate"` for translating to English
+ 
     result = model.transcribe(audio_path, language=language)
     info_data["whisper_result"] = result
     return info_data
