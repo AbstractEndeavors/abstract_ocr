@@ -23,6 +23,11 @@ src/abstract_ocr/imports/image_utils/cv_constants.py
 src/abstract_ocr/imports/image_utils/image_readers.py
 src/abstract_ocr/imports/image_utils/threshold_utils.py
 src/abstract_ocr/imports/image_utils/utils.py
+src/abstract_ocr/imports/utils/__init__.py
+src/abstract_ocr/imports/utils/constants.py
+src/abstract_ocr/imports/utils/functions.py
+src/abstract_ocr/imports/utils/imports.py
+src/abstract_ocr/imports/utils/splitToChunk.py
 src/abstract_ocr/ocr_utils/__init__.py
 src/abstract_ocr/ocr_utils/column_utils.py
 src/abstract_ocr/ocr_utils/getimg.py
