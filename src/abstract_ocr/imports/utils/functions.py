@@ -329,4 +329,4 @@ EXT_TO_PREFIX = {
     **dict.fromkeys({'.xls', '.xlsx', '.csv'}, 'sheets'),
     **dict.fromkeys({'.srt'}, 'srts'),
 }
-whisper_model_path = DEFAULT_PATHS["whisper"]
+
