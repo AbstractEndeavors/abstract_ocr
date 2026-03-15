@@ -63,7 +63,7 @@ class BBox:
     def aspect_ratio(self) -> float:
         return self.w / max(self.h, 1)
 
-    def overlaps_x(self, other: BBox, threshold: float = 0.3) -> bool:
+    def overlaps_x(self, other, threshold: float = 0.3) -> bool:
         """True if horizontal overlap exceeds threshold of the smaller width."""
         overlap = max(0, min(self.x2, other.x2) - max(self.x, other.x))
         smaller = min(self.w, other.w)
