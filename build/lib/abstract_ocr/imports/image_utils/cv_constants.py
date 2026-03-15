@@ -5,7 +5,7 @@ Fuzzy resolver for OpenCV constant names (e.g., 'gray', 'binary_inv', 'otsu').
 Provides dynamic matching and introspection for cv2 constants.
 """
 
-from ..imports import *
+from ..init_imports import *
 
 CV_SCALE: Set[str] = {
     "THRESH_OTSU",

@@ -4,7 +4,7 @@ abstract_cv.image_readers
 Utility for reading and verifying images with fuzzy OpenCV constant resolution.
 """
 
-from ..imports import *
+from ..init_imports import *
 from .cv_constants import get_cv_scale
 
 def read_image(image_path: str, imread_cv_scale: Optional[str] = None):

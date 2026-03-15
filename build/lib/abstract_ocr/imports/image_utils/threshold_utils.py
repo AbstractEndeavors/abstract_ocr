@@ -5,7 +5,7 @@ Provides thresholding utilities using dynamic cv2 constants.
 Includes ink-pixel thresholding and binary shape extraction.
 """
 
-from ..imports import *
+from ..init_imports import *
 from .cv_constants import get_cv_scale
 from .image_readers import read_image
 

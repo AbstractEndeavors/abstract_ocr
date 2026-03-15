@@ -169,7 +169,8 @@ def slice_columns(
     h, w, _ = img.shape
 
     if divider is None:
-        divider = detect_columns(image_path)[0]
+        logger.info("Single column page detected")
+        return columns_js
     out_dir = out_dir or os.getcwd()
 
     left_end    = max(0, int(divider + w * left_overlap))
