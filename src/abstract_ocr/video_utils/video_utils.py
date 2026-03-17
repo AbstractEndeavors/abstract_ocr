@@ -1,5 +1,5 @@
-from .imports import *
-from .ocr_utils import extract_image_texts_from_directory
+from ..imports import *
+from ..ocr_utils import extract_image_texts_from_directory
 def clip_frames(items,initial=None,end=None):
     initial = initial or 35
     end = end or 35

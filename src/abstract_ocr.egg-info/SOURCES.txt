@@ -5,7 +5,6 @@ src/abstract_ocr/__init__.py
 src/abstract_ocr/repo_utils.py
 src/abstract_ocr/seo_utils.py
 src/abstract_ocr/transcribe_utils.py
-src/abstract_ocr/video_utils.py
 src/abstract_ocr.egg-info/PKG-INFO
 src/abstract_ocr.egg-info/SOURCES.txt
 src/abstract_ocr.egg-info/dependency_links.txt
@@ -53,4 +52,5 @@ src/abstract_ocr/text_utils/text_utils.py
 src/abstract_ocr/video_utils/__init__.py
 src/abstract_ocr/video_utils/frame_extract.py
 src/abstract_ocr/video_utils/text_extract.py
+src/abstract_ocr/video_utils/video_utils.py
 tests/test.py
