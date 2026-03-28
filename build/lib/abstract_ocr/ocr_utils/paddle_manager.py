@@ -17,8 +17,8 @@ class PaddleManager(metaclass=SingletonMeta):
     CPU-locked PaddleOCR manager.
     Ensures only one PaddleOCR model instance is ever loaded.
     """
-    paddle = lazy_import("paddle")
-    PaddleOCR = get_lazy_attr("paddleocr", "PaddleOCR")
+
+    
     
     def __init__(self, lang: str = "en",cls=False):
         self.lang = lang
@@ -34,6 +34,7 @@ class PaddleManager(metaclass=SingletonMeta):
             # 🔒 Lock Paddle to CPU globally
             paddle = lazy_import("paddle")
             paddle.device.set_device("cpu")
+            PaddleOCR = get_lazy_attr("paddleocr", "PaddleOCR")
             self.ocr = PaddleOCR(use_angle_cls=True, lang=self.lang)
             self.initialized = True
             logger.info("✅ PaddleOCR initialized (CPU mode)")

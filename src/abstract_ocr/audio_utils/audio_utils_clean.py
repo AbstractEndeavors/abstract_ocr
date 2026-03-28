@@ -11,7 +11,7 @@ def transcribe_audio_file_clean(
     and (optionally) dump to JSON at `output_json`.
     """
     recognizer = sr.Recognizer()
-    audio = AudioSegment.from_file(audio_path)
+    audio = get_pydub("AudioSegment").from_file(audio_path)
 
     # 1) Calibrate once on the first second
     calib = audio[:1000]
@@ -88,12 +88,12 @@ def chunk_on_silence(
     min_silence_len: int = 700,
     silence_thresh: Optional[int] = None,
     keep_silence: int = 300
-) -> List[AudioSegment]:
+) -> List[get_pydub("AudioSegment")]:
     """
     Load the file and split on silent parts.
-    Returns a list of pydub AudioSegment chunks.
+    Returns a list of pydub get_pydub("AudioSegment") chunks.
     """
-    audio = AudioSegment.from_file(audio_path)
+    audio = get_pydub("AudioSegment").from_file(audio_path)
     # dynamically set threshold ~16 dB below average loudness
     silence_thresh = silence_thresh or int(audio.dBFS) - 16
     return split_on_silence(

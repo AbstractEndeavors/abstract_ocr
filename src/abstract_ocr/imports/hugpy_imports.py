@@ -1,29 +1,31 @@
 from .init_imports import *
-import spacy,pytesseract,PyPDF2,whisper,easyocr
-import torch
-import speech_recognition as sr
-from pydub.silence import detect_nonsilent, split_on_silence
-from pydub import AudioSegment
+from abstract_hugpy import (
+    get_transformers,
+    get_keybert,
+    get_pytesseract,
+    get_pypdf2,
+    get_easyocr,
+    get_speech_recognition,
+    get_pydub,
+    get_paddleocr,
+    get_pdf2image,
+    get_spacy,
+    require,
+)
 
-from keybert import KeyBERT
-from transformers import LEDTokenizer,LEDForConditionalGeneration, pipeline
-from paddleocr import PaddleOCR
-from pdf2image import convert_from_path
 logger = get_logFile(__name__)
 
-
-# --------------------------------------------------
-# internal cache
-# --------------------------------------------------
+# ─────────────────────────────────────────────────────────────
+# Lazy model accessors
+# ─────────────────────────────────────────────────────────────
 
 _MODELS = {}
 
-# --------------------------------------------------
-# summarizer
-# --------------------------------------------------
 
 def get_summarizer():
+    """Text summarizer (lazy-loaded)."""
     if "summarizer" not in _MODELS:
+        pipeline = get_transformers("pipeline")
         _MODELS["summarizer"] = pipeline(
             "text-generation",
             model="Falconsai/text_summarization"
@@ -31,12 +33,10 @@ def get_summarizer():
     return _MODELS["summarizer"]
 
 
-# --------------------------------------------------
-# keyword extractor
-# --------------------------------------------------
-
 def get_keyword_extractor():
+    """Keyword extractor (lazy-loaded)."""
     if "keyword_extractor" not in _MODELS:
+        pipeline = get_transformers("pipeline")
         _MODELS["keyword_extractor"] = pipeline(
             "feature-extraction",
             model="distilbert-base-uncased"
@@ -44,12 +44,10 @@ def get_keyword_extractor():
     return _MODELS["keyword_extractor"]
 
 
-# --------------------------------------------------
-# generator
-# --------------------------------------------------
-
 def get_generator():
+    """Text generator (lazy-loaded)."""
     if "generator" not in _MODELS:
+        pipeline = get_transformers("pipeline")
         _MODELS["generator"] = pipeline(
             "text-generation",
             model="distilgpt2",
@@ -58,25 +56,21 @@ def get_generator():
     return _MODELS["generator"]
 
 
-# --------------------------------------------------
-# keybert
-# --------------------------------------------------
-
 def get_kw_model():
+    """KeyBERT instance (lazy-loaded)."""
     if "kw_model" not in _MODELS:
+        KeyBERT = get_keybert()
         extractor = get_keyword_extractor()
         _MODELS["kw_model"] = KeyBERT(model=extractor.model)
     return _MODELS["kw_model"]
 
 
-# --------------------------------------------------
-# LED summarizer (long docs)
-# --------------------------------------------------
-
 def get_led():
+    """LED tokenizer and model for long documents (lazy-loaded)."""
     if "led" not in _MODELS:
+        LEDTokenizer = get_transformers("LEDTokenizer")
+        LEDForConditionalGeneration = get_transformers("LEDForConditionalGeneration")
         tokenizer = LEDTokenizer.from_pretrained("allenai/led-base-16384")
         model = LEDForConditionalGeneration.from_pretrained("allenai/led-base-16384")
         _MODELS["led"] = (tokenizer, model)
-
     return _MODELS["led"]

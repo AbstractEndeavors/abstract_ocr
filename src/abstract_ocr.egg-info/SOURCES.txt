@@ -4,6 +4,7 @@ setup.py
 src/abstract_ocr/__init__.py
 src/abstract_ocr/repo_utils.py
 src/abstract_ocr/seo_utils.py
+src/abstract_ocr/test_imports.py
 src/abstract_ocr/transcribe_utils.py
 src/abstract_ocr.egg-info/PKG-INFO
 src/abstract_ocr.egg-info/SOURCES.txt

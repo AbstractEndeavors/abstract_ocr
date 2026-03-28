@@ -1,7 +1,7 @@
 from .imports import *
 SAMPLE_RATE = 16000
 def get_audio_duration(file_path):
-    audio = AudioSegment.from_wav(file_path)
+    audio = get_pydub("AudioSegment").from_wav(file_path)
     duration_seconds = len(audio) / 1000
     duration_formatted = format_timestamp(len(audio))
     return duration_seconds,duration_formatted
@@ -16,7 +16,7 @@ def transcribe_audio_file_clean(
     and (optionally) dump to JSON at `output_json`.
     """
     recognizer = sr.Recognizer()
-    audio = AudioSegment.from_file(audio_path)
+    audio = get_pydub("AudioSegment").from_file(audio_path)
 
     # 1) Calibrate once on the first second
     calib = audio[:1000]
@@ -93,12 +93,12 @@ def chunk_on_silence(
     min_silence_len: int = 700,
     silence_thresh: Optional[int] = None,
     keep_silence: int = 300
-) -> List[AudioSegment]:
+) -> List[get_pydub("AudioSegment")]:
     """
     Load the file and split on silent parts.
     Returns a list of pydub AudioSegment chunks.
     """
-    audio = AudioSegment.from_file(audio_path)
+    audio = get_pydub("AudioSegment").from_file(audio_path)
     # dynamically set threshold ~16 dB below average loudness
     silence_thresh = silence_thresh or int(audio.dBFS) - 16
     return split_on_silence(
