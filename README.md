@@ -1,4 +1,3 @@
----
 ## **abstract_ocr / layout_ocr — Layout-Aware OCR Pipeline**
 
 A structured OCR pipeline designed for **layout-aware text extraction from complex documents**, combining preprocessing, column detection, region classification, and ordered OCR assembly.
