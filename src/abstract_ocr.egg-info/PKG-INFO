@@ -1,7 +1,7 @@
 Metadata-Version: 2.4
 Name: abstract_ocr
-Version: 0.0.1.60
-Summary: abstract_ocr
+Version: 0.0.1.61
+Summary: A structured OCR pipeline designed for **layout-aware text extraction from complex documents**, combining preprocessing, column detection, region classification, and ordered OCR assembly.
 Author: putkoff
 Author-email: partners@abstractendeavors.com
 Classifier: Development Status :: 3 - Alpha
@@ -25,6 +25,7 @@ Requires-Dist: pytesseract
 Requires-Dist: lxml
 Requires-Dist: moviepy==1.0.3
 Requires-Dist: spacy
+Requires-Dist: abstract_hugpy
 Dynamic: author
 Dynamic: author-email
 Dynamic: classifier
@@ -34,135 +35,205 @@ Dynamic: requires-dist
 Dynamic: requires-python
 Dynamic: summary
 
-# Unknown Package (vUnknown Version)
+## **abstract_ocr / layout_ocr — Layout-Aware OCR Pipeline**
 
-No description available
+A structured OCR pipeline designed for **layout-aware text extraction from complex documents**, combining preprocessing, column detection, region classification, and ordered OCR assembly.
 
-## Installation
+Built to handle:
 
-```bash
-pip install Unknown Package
+* multi-column PDFs
+* mixed-content layouts (text, figures, captions)
+* noisy or scanned documents
+* large-scale document ingestion pipelines
+
+---
+
+## 🔹 What This System Is
+
+This is not a simple OCR wrapper — it is a **typed, multi-stage processing pipeline**:
+
+* transforms raw images into structured page representations
+* detects document layout (columns, headers, regions)
+* classifies content blocks (text, figures, captions)
+* applies OCR at the region level
+* reconstructs output in correct reading order
+
+The system is designed for **deterministic, reproducible extraction** rather than heuristic text scraping.
+
+---
+
+## 🔹 Pipeline Overview
+
+```text
+PageImage
+    ↓
+Preprocess (denoise + binarize)
+    ↓
+Layout Detection
+    ├─ Column detection (vertical projection)
+    ├─ Header detection
+    └─ Region classification (text / figure / caption)
+    ↓
+Region OCR
+    ├─ Crop per region
+    ├─ Apply OCR (Tesseract)
+    ├─ Fallback to column-level OCR if needed
+    ↓
+Reading Order Assembly
+    ↓
+OCRResult (structured blocks + raw text)
 ```
 
-## Dependencies
+---
 
-None
+## 🔹 Core Capabilities
 
-## Modules
+* **Layout Detection**
 
-### src/abstract_ocr/old/download_pdf.py
+  * Column detection via vertical projection valleys
+  * Header segmentation via density scanning
+  * Multi-column classification (single / dual / mixed)
 
-Description of script based on prompt: You are analyzing a Python script 'download_pdf.py (mock response)
+* **Region Classification**
 
-### src/abstract_ocr/text_utils.py
+  * Connected-component analysis
+  * Density-based classification (text vs figure vs caption)
+  * Column-aware region assignment
 
-Description of script based on prompt: You are analyzing a Python script 'text_utils.py'  (mock response)
+* **Region-Level OCR**
 
-### src/old/transcribe_utils.py
+  * OCR applied per detected block (not full-page)
+  * Adaptive Tesseract configuration by region type
+  * Automatic fallback to column-level OCR when detection fails
 
-Description of script based on prompt: You are analyzing a Python script 'transcribe_util (mock response)
+* **Reading Order Reconstruction**
 
-### src/abstract_ocr/transcribe_utils.py
+  * Column-aware ordering
+  * Top-to-bottom sequencing within columns
+  * Header/body/caption prioritization
 
-Description of script based on prompt: You are analyzing a Python script 'transcribe_util (mock response)
+* **Typed Pipeline Execution**
 
-### src/abstract_ocr/repo_utils.py
+  * All steps validated via explicit input/output types
+  * Registry-driven execution model
+  * No implicit coupling between pipeline stages
 
-Description of script based on prompt: You are analyzing a Python script 'repo_utils.py'  (mock response)
+---
 
-### src/abstract_ocr/old/video_utils.py
+## 🔹 Architecture
 
-Description of script based on prompt: You are analyzing a Python script 'video_utils.py' (mock response)
+The pipeline is built around a **step registry + type-safe execution chain**:
 
-### src/old/seo_utils.py
+* Each step declares:
 
-Description of script based on prompt: You are analyzing a Python script 'seo_utils.py' l (mock response)
+  * input type
+  * output type
+* The pipeline validates compatibility before execution
+* Execution is explicit, deterministic, and observable
 
-### src/abstract_ocr/variable_utils.py
+Example chain:
 
-Description of script based on prompt: You are analyzing a Python script 'variable_utils. (mock response)
+```python
+["preprocess", "detect_layout", "ocr_regions"]
+```
 
-### src/old/pdf_utils.py
+Each step is independently replaceable and composable.
 
-Description of script based on prompt: You are analyzing a Python script 'pdf_utils.py' l (mock response)
+---
 
-### src/abstract_ocr/old/audio_utils_clean.py
+## 🔹 Key Design Decisions
 
-Description of script based on prompt: You are analyzing a Python script 'audio_utils_cle (mock response)
+### **Typed Data Flow**
 
-### src/abstract_ocr/seo_utils.py
+All intermediate results are structured dataclasses:
 
-Description of script based on prompt: You are analyzing a Python script 'seo_utils.py' l (mock response)
+* `PageImage`
+* `PreprocessedImage`
+* `LayoutDetection`
+* `OCRResult`
 
-### src/abstract_ocr/old/macros.py
+No ad-hoc dictionaries — ensures:
 
-Description of script based on prompt: You are analyzing a Python script 'macros.py' loca (mock response)
+* traceability
+* consistency
+* debuggability
 
-### src/abstract_ocr/__init__.py
+---
 
-Description of script based on prompt: You are analyzing a Python script '__init__.py' lo (mock response)
+### **Layout-First OCR**
 
-### src/abstract_ocr/old/transcribe_audio.py
+OCR is applied **after structure is understood**, not before.
 
-Description of script based on prompt: You are analyzing a Python script 'transcribe_audi (mock response)
+This prevents:
 
-### src/old/text_utils.py
+* column interleaving
+* incorrect reading order
+* misclassification of content
 
-Description of script based on prompt: You are analyzing a Python script 'text_utils.py'  (mock response)
+---
 
-### src/abstract_ocr/audio_utils.py
+### **Fallback Over Failure**
 
-Description of script based on prompt: You are analyzing a Python script 'audio_utils.py' (mock response)
+If region detection fails:
 
-### src/abstract_ocr/pdf_utils.py
+* system falls back to column-level OCR
+* ensures output is still usable
 
-Description of script based on prompt: You are analyzing a Python script 'pdf_utils.py' l (mock response)
+---
 
-### src/old/functions.py
+### **Determinism Over Heuristics**
 
-Description of script based on prompt: You are analyzing a Python script 'functions.py' l (mock response)
+* explicit thresholds (config-driven)
+* no hidden behavior
+* reproducible results across runs
 
-### src/old/video_utils.py
+---
 
-Description of script based on prompt: You are analyzing a Python script 'video_utils.py' (mock response)
+## 🔹 Why This Exists
 
-### src/abstract_ocr/ocr_utils.py
+Traditional OCR pipelines:
 
-Description of script based on prompt: You are analyzing a Python script 'ocr_utils.py' l (mock response)
+* ignore layout
+* operate on full pages
+* produce inconsistent reading order
+* fail silently on complex documents
 
-### src/abstract_ocr/old/linetest.py
+This system:
 
-Description of script based on prompt: You are analyzing a Python script 'linetest.py' lo (mock response)
+* understands document structure
+* isolates regions before OCR
+* enforces reading order
+* produces structured outputs suitable for downstream systems
 
-### src/old/__init__.py
+---
 
-Description of script based on prompt: You are analyzing a Python script '__init__.py' lo (mock response)
+## 🔹 Example Use Cases
 
-### src/old/ocr_utils.py
+* PDF → structured text extraction
+* research document ingestion pipelines
+* financial filings parsing
+* multi-column article extraction
+* preprocessing for NLP / LLM pipelines
+* search indexing and document analysis
 
-Description of script based on prompt: You are analyzing a Python script 'ocr_utils.py' l (mock response)
+---
 
-### src/old/audio_utils.py
+## 🔹 Integration Context
 
-Description of script based on prompt: You are analyzing a Python script 'audio_utils.py' (mock response)
+This module is designed to plug into:
 
-### src/abstract_ocr/old/audio_utils.py
+* document ingestion systems
+* OCR + NLP pipelines (e.g. abstract_hugpy)
+* search and indexing systems
+* large-scale document processing workflows
 
-Description of script based on prompt: You are analyzing a Python script 'audio_utils.py' (mock response)
+---
 
-### src/abstract_ocr/old/audio_utils_old.py
+## 🔹 Design Philosophy
 
-Description of script based on prompt: You are analyzing a Python script 'audio_utils_old (mock response)
+* **Structure before extraction**
+* **Determinism over convenience**
+* **Typed pipelines over implicit flows**
+* **Fallback over failure**
 
-### src/abstract_ocr/routes.py
-
-Description of script based on prompt: You are analyzing a Python script 'routes.py' loca (mock response)
-
-### src/abstract_ocr/functions.py
-
-Description of script based on prompt: You are analyzing a Python script 'functions.py' l (mock response)
-
-### src/abstract_ocr/video_utils.py
-
-Description of script based on prompt: You are analyzing a Python script 'video_utils.py' (mock response)
-
+---

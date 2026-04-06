@@ -4,10 +4,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 setuptools.setup(
     name='abstract_ocr',
-    version='0.0.1.60',
+    version='0.0.1.61',
     author='putkoff',
     author_email='partners@abstractendeavors.com',
-    description='abstract_ocr',
+    description='A structured OCR pipeline designed for **layout-aware text extraction from complex documents**, combining preprocessing, column detection, region classification, and ordered OCR assembly.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     package_dir={"": "src"},
@@ -33,7 +33,8 @@ setuptools.setup(
         'pytesseract',
         'lxml',
         'moviepy==1.0.3',
-        'spacy'
+        'spacy',
+        'abstract_hugpy'
         ],
     python_requires=">=3.6",
     # Add this line to include wheel format in your distribution
