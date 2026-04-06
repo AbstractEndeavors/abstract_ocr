@@ -37,29 +37,41 @@ This is not a simple OCR wrapper — it is a **typed, multi-stage processing pip
 The system is designed for **deterministic, reproducible extraction** rather than heuristic text scraping.
 
 ---
-
-## 🔹 Pipeline Overview
-
+## Pipeline Overview
 ```text
-PageImage
+PDF Input
     ↓
-Preprocess (denoise + binarize)
+Slice / Decompose (images + text per page)
     ↓
-Layout Detection
-    ├─ Column detection (vertical projection)
-    ├─ Header detection
-    └─ Region classification (text / figure / caption)
+OCR + Text Extraction (layout-aware engines)
     ↓
-Region OCR
-    ├─ Crop per region
-    ├─ Apply OCR (Tesseract)
-    ├─ Fallback to column-level OCR if needed
+Metadata Generation
+    ├─ summaries
+    ├─ keywords
+    └─ descriptions
     ↓
-Reading Order Assembly
+Manifest Creation (per-page + per-document)
     ↓
-OCRResult (structured blocks + raw text)
+HTML Generation
+    ├─ PDF viewer pages
+    └─ gallery index pages
+    ↓
+Static Site Output (SEO-ready)
 ```
+```mermaid
+flowchart TD
+    A[Input Image / Page Image]
+    B[Preprocess\nDenoise + Binarize]
+    C[Layout Detection\nColumns + Header Cutoff]
+    D[Region Classification\nText / Figure / Caption]
+    E[Region OCR\nCrop + Tesseract]
+    F[Fallback OCR\nColumn-level OCR]
+    G[Reading Order Assembly]
+    H[Structured OCRResult\nBlocks + Raw Text + Layout]
 
+    A --> B --> C --> D --> E --> G --> H
+    D -->|No usable regions| F --> G
+```
 ---
 
 ## 🔹 Core Capabilities
