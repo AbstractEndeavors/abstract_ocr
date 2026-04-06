@@ -1,3 +1,16 @@
+## Part of the Abstract Media Intelligence Platform
+
+This module provides layout-aware OCR as part of a larger media processing system.
+
+abstract_ocr focuses on extraction:
+- multi-engine OCR (Tesseract / EasyOCR / PaddleOCR)
+- column detection and region segmentation
+- structured, position-aware text output
+
+Full system: https://github.com/AbstractEndeavors/abstract-media-intelligence
+
+---
+
 ## **abstract_ocr / layout_ocr — Layout-Aware OCR Pipeline**
 
 A structured OCR pipeline designed for **layout-aware text extraction from complex documents**, combining preprocessing, column detection, region classification, and ordered OCR assembly.
